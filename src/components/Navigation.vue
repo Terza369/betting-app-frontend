@@ -6,7 +6,7 @@
                     <router-link to="/" class="nav-link">Home</router-link>
                 </li>
                 <li class="main-header__item">
-                    <router-link to="/about" class="nav-link">Create</router-link>
+                    <router-link to="/create" class="nav-link">Create</router-link>
                 </li>
                 <li class="main-header__item-email">
                 simun.terzanovic@gmail.com
