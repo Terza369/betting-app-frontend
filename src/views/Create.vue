@@ -176,7 +176,7 @@ export default {
         duration: this.duration
       }
 
-      const res = await fetch('api/matches/', {
+      const res = await fetch('https://betting-app-backend.herokuapp.com/matches/', {
         method: 'POST',
         body: JSON.stringify(match),
         headers: {

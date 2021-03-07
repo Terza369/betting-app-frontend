@@ -1,5 +1,5 @@
 module.exports = {
-    devServer: {
+/*     devServer: {
       proxy: {
         '^/api': {
           target: 'https://betting-app-backend.herokuapp.com/',
@@ -8,5 +8,5 @@ module.exports = {
           pathRewrite: { '^/api': '/' },
         },
       },
-    },
+    }, */
   }

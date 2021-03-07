@@ -110,7 +110,7 @@ export default {
         startTime: startTime
       }
 
-      await fetch('api/matches/' + match._id, {
+      await fetch('https://betting-app-backend.herokuapp.com/matches/' + match._id, {
         method: 'PUT',
         body: JSON.stringify(body),
         headers: {

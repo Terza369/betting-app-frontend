@@ -29,17 +29,17 @@ export default {
   },
   methods: {
     async fetchMatches() {
-      const res = await fetch('api/matches');
+      const res = await fetch('https://betting-app-backend.herokuapp.com/matches');
       const data = await res.json();
       return data;
     },
     async fetchTournaments() {
-      const res = await fetch('api/tournaments');
+      const res = await fetch('https://betting-app-backend.herokuapp.com/tournaments');
       const data = await res.json();
       return data;
     },
     async fetchSports() {
-      const res = await fetch('api/sports');
+      const res = await fetch('https://betting-app-backend.herokuapp.com/sports');
       const data = await res.json();
       return data;
     },
@@ -48,7 +48,7 @@ export default {
         startTime: (new Date()).setSeconds((Math.random() * (60 - 1) + 1))
       }
 
-      const res = await fetch('api/matches/' + match._id, {
+      const res = await fetch('https://betting-app-backend.herokuapp.com/matches/' + match._id, {
         method: 'PUT',
         body: JSON.stringify(body),
         headers: {
