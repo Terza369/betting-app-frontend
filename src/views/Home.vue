@@ -4,10 +4,8 @@
       <div class="col-sm-8 border" id="matches">
           <Sport 
           v-bind:key="sport._id"
-          v-for="sport in uniqueSortedSports"
-          v-bind:sport="getSport(sport._id)"
-          v-bind:tournaments="getSportTournaments(sport._id)"
-          v-bind:matches="getSportMatches(sport._id)"
+          v-for="sport in sports"
+          v-bind:sport="sport"
           v-on:match-click="matchClick"/>
       </div>
       <div class="col-sm-4" id="ticket">
@@ -16,7 +14,7 @@
             type="button" 
             class="btn btn-warning" 
             id="resetButton"
-            v-on:click="resetClick"
+            v-on:click="reset"
           >Reset</button>
         </div>
         <Ticket 
@@ -32,85 +30,26 @@ import Ticket from '../components/Ticket'
 
 export default {
   name: 'Home',
-  props: {
-    matches: Array,
-    tournaments: Array,
-    sports: Array
-  },
   components: {
     Sport,
     Ticket
   },
-  computed: {
-    uniqueSortedSports() {
-      let uniqueSportIds = this.matches
-        .map(match => match.sportId)
-        .filter((value, index, self) => self.indexOf(value) === index);
-
-      let uniqueSports = [];
-      uniqueSportIds.forEach(uniqueSportId => {
-        this.sports.forEach(sport => {
-          if(sport._id === uniqueSportId) {
-            uniqueSports.push(sport);
-          }
-        })
-      })
-
-      uniqueSports.sort((a, b) => {
-        return a.priority - b.priority;
-      })
-
-      return uniqueSports;
-    }
-  },
   data() {
     return {
+      sports: [],
       clickedMatches: []
     }
   },
   methods: {
-    getSport(id) {
-      return this.sports.filter(sport => sport._id === id)[0]
+    async fetchSports() {
+      const res = await fetch('https://betting-app-backend.herokuapp.com/matches/everything');
+      const data = await res.json();
+      return data;
     },
-    getSportMatches(sportId) {
-      return this.matches
-        .map(match => {
-          if(match.sportId === sportId) {
-            return match;
-          }
-        })
-        .filter(match => {
-          return match !== undefined;
-        })
-    },
-    getSportTournaments(sportId) {
-      return this.tournaments
-        .map(tournament => {
-          if(tournament.sportId === sportId) {
-            return tournament;
-          }
-        })
-        .filter(tournament => {
-          return tournament !== undefined;
-        })
-    },
-    matchClick(match) {
-      if(this.clickedMatches.includes(match)) {
-        this.clickedMatches.splice(this.clickedMatches.indexOf(match), 1);
-      } else {
-        this.clickedMatches.push(match);
-      }
-    },
-    async resetMatchTime(match) {
-      let startTime = new Date();
-      startTime.setSeconds((Math.random() * (60 - 1) + 1));
-      startTime = new Date(startTime);
+    async incrementScores() {
+      const body = this.sports;
 
-      const body = {
-        startTime: startTime
-      }
-
-      await fetch('https://betting-app-backend.herokuapp.com/matches/' + match._id, {
+      const res = await fetch('https://betting-app-backend.herokuapp.com/matches/everything/increment', {
         method: 'PUT',
         body: JSON.stringify(body),
         headers: {
@@ -118,18 +57,27 @@ export default {
         }
       });
 
+      this.sports = await res.json();
+
       return;
     },
-    async resetClick() {
-      this.matches.forEach(match => this.resetMatchTime(match));
-
-      this.$emit('reset');
-
+    async reset() {
+      const res = await fetch('https://betting-app-backend.herokuapp.com/matches/everything?reset=true');
+      this.matches = await res.json();
+      this.$router.go(0);
       return;
+    },
+    matchClick(match) {
+      if(this.clickedMatches.includes(match)) {
+        this.clickedMatches.splice(this.clickedMatches.indexOf(match), 1);
+      } else {
+        this.clickedMatches.push(match);
+      }
     }
   },
   async created() {
-
+    this.sports = await this.fetchSports();
+    setInterval(() => this.incrementScores(), 20000);
   }
 }
 </script>

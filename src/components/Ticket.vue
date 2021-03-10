@@ -43,12 +43,6 @@ export default {
             });
             return sum.toFixed(2);
         }
-    },
-    methods: {
-
-    },
-    created() {
-
     }
 }
 </script>

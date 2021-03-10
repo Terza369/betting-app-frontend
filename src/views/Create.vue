@@ -108,10 +108,6 @@
 <script>
 export default {
   name: 'Create',
-  props: {
-    sports: Array,
-    tournaments: Array
-  },
   computed: {
     sportNames() {
       return this.sports.map(sport => sport.name);
@@ -150,6 +146,8 @@ export default {
   },
   data() {
     return {
+      sports: [],
+      tournaments: [],
       sport: 'Select a sport',
       tournament: 'Select a tournament',
       team1: '',
@@ -161,6 +159,16 @@ export default {
     }
   },
   methods: {
+    async fetchTournaments() {
+      const res = await fetch('https://betting-app-backend.herokuapp.com/tournaments');
+      const data = await res.json();
+      return data;
+    },
+    async fetchSports() {
+      const res = await fetch('https://betting-app-backend.herokuapp.com/sports');
+      const data = await res.json();
+      return data;
+    },
     async onSubmit(event) {
       event.preventDefault();
 
@@ -186,12 +194,9 @@ export default {
 
       const data = await res.json();
 
-      console.log(data);
-
       if(data.insertedCount > 0) {
         this.$emit('match-created', data.match);
       }
-
 
       this.sport = 'Select a sport';
       this.tournament = 'Select a tournament';
@@ -202,6 +207,10 @@ export default {
       this.minute = '';
       this.duration = '';
     }
+  },
+  async created() {
+    this.sports = await this.fetchSports();
+    this.tournaments = await this.fetchTournaments();
   }
 }
 </script>
